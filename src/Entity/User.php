@@ -55,6 +55,46 @@ class User implements UserInterface
      */
     private $articles;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $about;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $hobbies;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $image;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $imageCouverture;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $facebookLink;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $twitterLink;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $firstName;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $lastName;
+
     public function __construct()
     {
         $this->articles = new ArrayCollection();
@@ -189,6 +229,102 @@ class User implements UserInterface
                 $article->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAbout(): ?string
+    {
+        return $this->about;
+    }
+
+    public function setAbout(?string $about): self
+    {
+        $this->about = $about;
+
+        return $this;
+    }
+
+    public function getHobbies(): ?string
+    {
+        return $this->hobbies;
+    }
+
+    public function setHobbies(?string $hobbies): self
+    {
+        $this->hobbies = $hobbies;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getImageCouverture(): ?string
+    {
+        return $this->imageCouverture;
+    }
+
+    public function setImageCouverture(?string $imageCouverture): self
+    {
+        $this->imageCouverture = $imageCouverture;
+
+        return $this;
+    }
+
+    public function getFacebookLink(): ?string
+    {
+        return $this->facebookLink;
+    }
+
+    public function setFacebookLink(?string $facebookLink): self
+    {
+        $this->facebookLink = $facebookLink;
+
+        return $this;
+    }
+
+    public function getTwitterLink(): ?string
+    {
+        return $this->twitterLink;
+    }
+
+    public function setTwitterLink(?string $twitterLink): self
+    {
+        $this->twitterLink = $twitterLink;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(string $firstName): self
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(string $lastName): self
+    {
+        $this->lastName = $lastName;
 
         return $this;
     }

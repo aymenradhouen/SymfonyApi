@@ -89,7 +89,7 @@ class ApiUserController extends AbstractController
     /**
      * @Route("/{id}", name="update_user", methods={"PUT"})
      */
-    public function updateArticle(User $user, Request $request ,ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder)
+    public function updateUser(User $user, Request $request ,ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder)
     {
 
         if(empty($user))
@@ -139,7 +139,7 @@ class ApiUserController extends AbstractController
     /**
      * @Route("/{id}", name="delete_user", methods={"DELETE"})
      */
-    public function deleteArticle(User $user, EntityManagerInterface $em)
+    public function deleteUser(User $user, EntityManagerInterface $em)
     {
         if(empty($user))
         {
@@ -168,7 +168,7 @@ class ApiUserController extends AbstractController
     /**
      * @Route("/{id}", name="show_user", methods={"GET"})
      */
-    public function showArticle(User $user , SerializerInterface $serializer)
+    public function showUser(User $user , SerializerInterface $serializer)
     {
         if(empty($user))
         {
