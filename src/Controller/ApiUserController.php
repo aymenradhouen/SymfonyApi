@@ -50,7 +50,7 @@ class ApiUserController extends AbstractController
     }
 
     /**
-     * @Route("/", name="add_user", methods={"POST"})
+     * @Route("/register", name="add_user", methods={"POST"})
      */
     public function addUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator, UserPasswordEncoderInterface $passwordEncoder)
     {
@@ -87,11 +87,12 @@ class ApiUserController extends AbstractController
         }
 
     /**
-     * @Route("/{id}", name="update_user", methods={"PUT"})
+     * @Route("/{email}", name="update_user", methods={"PUT"})
      */
-    public function updateUser(User $user, Request $request ,ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder)
+    public function updateUser($email, Request $request ,ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository)
     {
 
+        $user = $userRepository->findOneBy(['email' => $email]);
         if(empty($user))
         {
             $response = [
@@ -113,14 +114,34 @@ class ApiUserController extends AbstractController
             return $this->json($errors, 400);
         }
 
-        $user->setEmail($data->getEmail());
-        $user->setPassword(
-            $passwordEncoder->encodePassword(
-                $user,
-                $data->getPassword()
-            )
-        );
-        $user->setLoginName($data->getLoginName());
+        if($data->getPassword())
+        {
+            $user->setPassword(
+                $passwordEncoder->encodePassword(
+                    $user,
+                    $data->getPassword()
+                )
+            );
+        }
+
+        $user->setAbout($data->getAbout());
+        $user->setHobbies($data->getHobbies());
+        $file = $data->getImage();
+            if($file) {
+                $filename = md5(uniqid()) . '.' . $file->guessExtension();
+                $file->move($this->getParameter('upload_directory'), $filename);
+                $user->setImage($filename);
+            }
+        $file = $data->getImageCouverture();
+        if($file) {
+            $filename = md5(uniqid()) . '.' . $file->guessExtension();
+            $file->move($this->getParameter('upload_directory'), $filename);
+            $user->setImageCouverture($filename);
+        }
+        $user->setFacebookLink($data->getFacebookLink());
+        $user->setTwitterLink($data->getTwitterLink());
+        $user->setFirstName($data->getFirstName());
+        $user->setLastName($data->getLastName());
 
         $em->persist($user);
         $em->flush();
@@ -166,10 +187,11 @@ class ApiUserController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="show_user", methods={"GET"})
+     * @Route("/{email}", name="show_user", methods={"GET"})
      */
-    public function showUser(User $user , SerializerInterface $serializer)
+    public function showUser($email , SerializerInterface $serializer, UserRepository $userRepository)
     {
+        $user = $userRepository->findOneBy(['email' => $email]);
         if(empty($user))
         {
             $response = [

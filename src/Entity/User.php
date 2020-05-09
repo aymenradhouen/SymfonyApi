@@ -57,41 +57,49 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("userArticle")
      */
     private $about;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("userArticle")
      */
     private $hobbies;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("userArticle")
      */
     private $image;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("userArticle")
      */
     private $imageCouverture;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("userArticle")
      */
     private $facebookLink;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("userArticle")
      */
     private $twitterLink;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("userArticle")
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("userArticle")
      */
     private $lastName;
 

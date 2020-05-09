@@ -3,6 +3,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Class TimeStampTrait
@@ -13,12 +14,14 @@ Trait TimeStampTrait {
     /**
      * @var \DateTime
      * @ORM\Column(name="created_at",type="datetime",nullable=true)
+     * @Groups("userArticle")
      */
     protected $createdAt;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="modified_at",type="datetime",nullable=true)
+     * @Groups("userArticle")
      */
     protected $modifiedAt;
 
