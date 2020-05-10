@@ -49,45 +49,9 @@ class ApiUserController extends AbstractController
         return new JsonResponse($response, 200, ['groups' => 'userArticle']);
     }
 
-    /**
-     * @Route("/register", name="add_user", methods={"POST"})
-     */
-    public function addUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator, UserPasswordEncoderInterface $passwordEncoder)
-    {
-            $json = $request->getContent();
-            $user = $serializer->deserialize($json, User::class, 'json');
-
-            $errors = $validator->validate($user);
-
-            if(count($errors) > 0)
-            {
-                return $this->json($errors, 400);
-            }
-
-            $em->persist($user);
-            $em->flush();
-            $user->setPassword(
-                $passwordEncoder->encodePassword(
-                    $user,
-                    $user->getPassword()
-                )
-            );
-            $em->persist($user);
-            $em->flush();
-
-        $response = [
-            'code' => 0,
-            'message' => 'User created !',
-            'error' => null,
-            'result' => null
-        ];
-
-        return $this->json($response, 201, [], ['groups' => 'userArticle']);
-
-        }
 
     /**
-     * @Route("/{email}", name="update_user", methods={"PUT"})
+     * @Route("/{email}", name="update_user", methods={"PATCH"})
      */
     public function updateUser($email, Request $request ,ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em, UserPasswordEncoderInterface $passwordEncoder, UserRepository $userRepository)
     {

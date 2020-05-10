@@ -47,6 +47,7 @@ class Article
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="articles")
+     * @Groups("userArticle")
      */
     private $user;
 

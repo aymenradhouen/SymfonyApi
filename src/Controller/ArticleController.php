@@ -50,14 +50,15 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * @Route("/", name="add_articles", methods={"POST"})
+     * @Route("/{email}", name="add_articles", methods={"POST"})
      */
-    public function createArticle(Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em,UserRepository $u)
+    public function createArticle($email,Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em,UserRepository $u)
     {
 
             $json = $request->getContent();
+            dd($json);
             $article = $serializer->deserialize($json, Article::class, 'json');
-            $user = $u->findOneBy(['id' => 3]);
+            $user = $u->findOneBy(['email' => $email]);
             $article->setUser($user);
 
             $errors = $validator->validate($article);
