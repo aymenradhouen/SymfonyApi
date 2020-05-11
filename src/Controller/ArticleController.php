@@ -50,16 +50,58 @@ class ArticleController extends AbstractController
     }
 
     /**
+     * @Route("/list/{email}", name="show_profile_article", methods={"GET"})
+     */
+    public function showProfileArticle($email, SerializerInterface $serializer, ArticleRepository $articleRepository, UserRepository $userRepository)
+    {
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $article = $articleRepository->findBy(['user' => $user]);
+
+        if(empty($article))
+        {
+            $response = [
+                'code' => 1,
+                'message' => 'Article not found',
+                'error' => null,
+                'result' => null
+            ];
+            return new JsonResponse($response, Response::HTTP_NOT_FOUND);
+        }
+
+        $data = $serializer->serialize($article, 'json', ['groups' => 'profileArticles']);
+
+        $response = [
+            'code' => 0,
+            'message' => 'Success',
+            'error' => null,
+            'result' => json_decode($data)
+        ];
+        return new JsonResponse($response, 200, ['groups' => 'profileArticles']);
+
+    }
+
+    /**
      * @Route("/{email}", name="add_articles", methods={"POST"})
      */
     public function createArticle($email,Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em,UserRepository $u)
     {
 
+            $article = new Article();
+            $location = $this->getParameter('articlesupload_directory');
             $json = $request->getContent();
-            dd($json);
-            $article = $serializer->deserialize($json, Article::class, 'json');
+            $decode = json_decode($json, true);
+
+
+            $filename = md5(uniqid()) . '.' . 'jpg';
+
+
+            file_put_contents($location. '/' . $filename, base64_decode( $decode['image']['value']));
+            $article->setTitle($decode['title']);
+            $article->setContent($decode['content']);
+            $article->setImage($filename);
             $user = $u->findOneBy(['email' => $email]);
             $article->setUser($user);
+
 
             $errors = $validator->validate($article);
 

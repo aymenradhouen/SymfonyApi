@@ -15,6 +15,7 @@ Trait TimeStampTrait {
      * @var \DateTime
      * @ORM\Column(name="created_at",type="datetime",nullable=true)
      * @Groups("userArticle")
+     * @Groups("profileArticles")
      */
     protected $createdAt;
 
@@ -22,6 +23,7 @@ Trait TimeStampTrait {
      * @var \DateTime
      * @ORM\Column(name="modified_at",type="datetime",nullable=true)
      * @Groups("userArticle")
+     * @Groups("profileArticles")
      */
     protected $modifiedAt;
 

@@ -52,6 +52,7 @@ class User implements UserInterface
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Article", mappedBy="user")
+     * @Groups("profileArticles")
      */
     private $articles;
 

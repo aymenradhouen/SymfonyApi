@@ -20,6 +20,7 @@ class Article
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups("userArticle")
+     * @Groups("profileArticles")
      */
     private $id;
 
@@ -27,6 +28,7 @@ class Article
      * @ORM\Column(type="string", length=255)
      * @Groups("userArticle")
      * @Assert\NotBlank(message="Please enter a title !")
+     * @Groups("profileArticles")
      */
     private $title;
 
@@ -34,6 +36,7 @@ class Article
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Please enter a title !")
      * @Groups("userArticle")
+     * @Groups("profileArticles")
      */
     private $content;
 
@@ -41,6 +44,7 @@ class Article
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="Please enter a title !")
      * @Groups("userArticle")
+     * @Groups("profileArticles")
      */
     private $image;
 
