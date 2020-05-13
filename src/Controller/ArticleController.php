@@ -91,9 +91,7 @@ class ArticleController extends AbstractController
             $json = $request->getContent();
             $decode = json_decode($json, true);
 
-
             $filename = md5(uniqid()) . '.' . 'jpg';
-
 
             file_put_contents($location. '/' . $filename, base64_decode( $decode['image']['value']));
             $article->setTitle($decode['title']);
