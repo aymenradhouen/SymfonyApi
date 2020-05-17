@@ -106,7 +106,7 @@ class CommentController extends AbstractController
 
 
     /**
-     * @Route("/{id}", name="delete_articles", methods={"DELETE"})
+     * @Route("/{id}", name="delete_comment", methods={"DELETE"})
      */
     public function deleteArticle(Comment $comment, EntityManagerInterface $em)
     {

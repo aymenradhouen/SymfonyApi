@@ -168,7 +168,6 @@ class ArticleController extends AbstractController
                 return new JsonResponse($response, Response::HTTP_NOT_FOUND);
             }
 
-
             $json = $request->getContent();
             $data = $serializer->deserialize($json, Article::class, 'json');
             $errors = $validator->validate($article);
@@ -180,7 +179,6 @@ class ArticleController extends AbstractController
 
             $article->setTitle($data->getTitle());
             $article->setContent($data->getContent());
-            $article->setImage($data->getImage());
 
             $em->persist($article);
             $em->flush();
@@ -197,7 +195,7 @@ class ArticleController extends AbstractController
 
 
     /**
-     * @Route("/{id}", name="delete_articles", methods={"DELETE"})
+     * @Route("/delete/{id}", name="delete_articles", methods={"DELETE"})
      */
     public function deleteArticle(Article $article, EntityManagerInterface $em)
     {
@@ -211,6 +209,7 @@ class ArticleController extends AbstractController
             ];
             return new JsonResponse($response, Response::HTTP_NOT_FOUND);
         }
+
         $em->remove($article);
         $em->flush();
 
@@ -223,7 +222,6 @@ class ArticleController extends AbstractController
         ];
 
         return new JsonResponse($response, 200, ['groups' => 'userArticle']);
-
 
     }
 

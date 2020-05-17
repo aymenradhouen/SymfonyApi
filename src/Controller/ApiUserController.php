@@ -178,7 +178,33 @@ class ApiUserController extends AbstractController
         return new JsonResponse($response, 200, ['groups' => 'userArticle']);
     }
 
+    /**
+     * @Route("/search/{value}", name="search_user", methods={"GET"})
+     */
+    public function searchUser($value , SerializerInterface $serializer, UserRepository $userRepository)
+    {
+        $user = $userRepository->search($value);
+        if(empty($user))
+        {
+            $response = [
+                'code' => 1,
+                'message' => 'User not found !',
+                'error' => null,
+                'result' => null
+            ];
+            return new JsonResponse($response, Response::HTTP_NOT_FOUND);
+        }
 
+        $data = $serializer->serialize($user, 'json', ['groups' => 'userArticle']);
+
+        $response = [
+            'code' => 0,
+            'message' => 'Success',
+            'error' => null,
+            'result' => json_decode($data)
+        ];
+        return new JsonResponse($response, 200, ['groups' => 'userArticle']);
+    }
 
 
 }
