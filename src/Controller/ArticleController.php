@@ -150,6 +150,35 @@ class ArticleController extends AbstractController
         return new JsonResponse($response, 200, ['groups' => 'userArticle']);
     }
 
+    /**
+     * @Route("/profile/{id}", name="list_articles_profile", methods={"GET"})
+     */
+    public function listArticleProfile($id,UserRepository $userRepository,ArticleRepository $articleRepository, SerializerInterface $serializer)
+    {
+        $user = $userRepository->findOneBy(['id' => $id]);
+        $article = $articleRepository->findBy(['user' => $user]);
+
+        if(empty($article))
+        {
+            $response = [
+                'code' => 1,
+                'message' => 'No articles found !',
+                'error' => null,
+                'result' => null
+            ];
+            return new JsonResponse($response, Response::HTTP_NOT_FOUND);
+        }
+        $data = $serializer->serialize($article, 'json', ['groups' => 'userArticle']);
+
+        $response = [
+            'code' => 0,
+            'message' => 'Success',
+            'error' => null,
+            'result' => json_decode($data)
+        ];
+        return new JsonResponse($response, 200, ['groups' => 'userArticle']);
+    }
+
 
     /**
      * @Route("/{id}", name="update_articles", methods={"PUT"})
