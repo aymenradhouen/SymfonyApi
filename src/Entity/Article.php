@@ -57,8 +57,27 @@ class Article
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="article")
+     * @Groups("userArticle")
      */
     private $comments;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups("userArticle")
+     */
+    private $likes;
+
+    /**
+     * @ORM\Column(type="array", nullable=true)
+     * @Groups("userArticle")
+     */
+    private $likedBy = [];
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups("userArticle")
+     */
+    private $createdBy;
 
     public function __construct()
     {
@@ -157,6 +176,42 @@ class Article
                 $comment->setArticle(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLikes(): ?int
+    {
+        return $this->likes;
+    }
+
+    public function setLikes(?int $likes): self
+    {
+        $this->likes = $likes;
+
+        return $this;
+    }
+
+    public function getLikedBy(): ?array
+    {
+        return $this->likedBy;
+    }
+
+    public function setLikedBy(?array $likedBy): self
+    {
+        $this->likedBy = $likedBy;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?string
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(string $createdBy): self
+    {
+        $this->createdBy = $createdBy;
 
         return $this;
     }

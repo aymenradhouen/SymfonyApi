@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Article;
 use App\Entity\Comment;
+use App\Repository\ArticleRepository;
 use App\Repository\CommentRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,8 +24,9 @@ class CommentController extends AbstractController
     /**
      * @Route("/{id}", name="show_comments", methods={"GET"})
      */
-    public function showArticle(Comment $comment, SerializerInterface $serializer)
+    public function showComment(Article $article, SerializerInterface $serializer, CommentRepository $commentRepository)
     {
+        $comment = $commentRepository->findBy(['article' => $article]);
         if(empty($comment))
         {
             $response = [
@@ -47,11 +51,11 @@ class CommentController extends AbstractController
     }
 
     /**
-     * @Route("/", name="add_comment", methods={"POST"})
+     * @Route("/{email}/{id}", name="add_comment", methods={"POST"})
      */
-    public function createArticle(Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em)
+    public function createComment($email,Article $article,UserRepository $userRepository , ArticleRepository $articleRepository, Request $request, ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em)
     {
-
+        $user = $userRepository->findOneBy(['email' => $email]);
         $json = $request->getContent();
         $comment = $serializer->deserialize($json, Comment::class, 'json');
 
@@ -61,6 +65,10 @@ class CommentController extends AbstractController
         {
             return $this->json($errors, 400);
         }
+
+        $comment->setArticle($article);
+        $comment->setFirstName($user->getFirstName());
+        $comment->setLastName($user->getLastName());
 
         $em->persist($comment);
         $em->flush();
@@ -79,7 +87,7 @@ class CommentController extends AbstractController
     /**
      * @Route("/", name="list_comments", methods={"GET"})
      */
-    public function listArticle(CommentRepository $commentRepository, SerializerInterface $serializer)
+    public function listComments(CommentRepository $commentRepository, SerializerInterface $serializer)
     {
         $comment = $commentRepository->findAll();
 
@@ -108,7 +116,7 @@ class CommentController extends AbstractController
     /**
      * @Route("/{id}", name="delete_comment", methods={"DELETE"})
      */
-    public function deleteArticle(Comment $comment, EntityManagerInterface $em)
+    public function deleteComment(Comment $comment, EntityManagerInterface $em)
     {
         if(empty($comment))
         {

@@ -99,6 +99,7 @@ class ArticleController extends AbstractController
             $article->setImage($filename);
             $user = $u->findOneBy(['email' => $email]);
             $article->setUser($user);
+            $article->setCreatedBy($user->getFirstName());
 
 
             $errors = $validator->validate($article);
@@ -180,48 +181,104 @@ class ArticleController extends AbstractController
     }
 
 
+//    /**
+//     * @Route("/like/{email}/{id}", name="like_article", methods={"PATCH"})
+//     */
+//    public function likeArticle($email, UserRepository $userRepository, Article $article, Request $request ,ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em)
+//    {
+//
+//        $user = $userRepository->findOneBy(['email' => $email]);
+//        $likes = $article->getLikes();
+//        $array[] = $article->getLikedBy();
+////        dd($array);
+////            if(empty($article))
+////            {
+////                $response = [
+////                    'code' => 1,
+////                    'message' => 'Article not found',
+////                    'error' => null,
+////                    'result' => null
+////                ];
+////                return new JsonResponse($response, Response::HTTP_NOT_FOUND);
+////            }
+////
+////            $json = $request->getContent();
+////            $data = $serializer->deserialize($json, Article::class, 'json');
+////            $errors = $validator->validate($article);
+//
+//        if(in_array("aymen", $array))
+//        {
+//        $article->setLikes($likes+1);
+//        $article->setLikedBy("aymen");
+//    } else {
+//            $article->setLikes($likes-1);
+//        }
+//
+//
+////            array_push($array,"aymen");
+//
+//
+////            if(count($errors) > 0)
+////            {
+////                return $this->json($errors, 400);
+////            }
+//
+//
+//            $em->persist($article);
+//            $em->flush();
+//
+//            $response = [
+//                'code' => 0,
+//                'message' => 'Article updated !',
+//                'error' => null,
+//                'result' => null
+//            ];
+//
+//            return $this->json($response, 201, [], ['groups' => 'userArticle']);
+//        }
+
+
     /**
      * @Route("/{id}", name="update_articles", methods={"PUT"})
      */
     public function updateArticle(Article $article, Request $request ,ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em)
     {
 
-            if(empty($article))
-            {
-                $response = [
-                    'code' => 1,
-                    'message' => 'Article not found',
-                    'error' => null,
-                    'result' => null
-                ];
-                return new JsonResponse($response, Response::HTTP_NOT_FOUND);
-            }
-
-            $json = $request->getContent();
-            $data = $serializer->deserialize($json, Article::class, 'json');
-            $errors = $validator->validate($article);
-
-            if(count($errors) > 0)
-            {
-                return $this->json($errors, 400);
-            }
-
-            $article->setTitle($data->getTitle());
-            $article->setContent($data->getContent());
-
-            $em->persist($article);
-            $em->flush();
-
+        if(empty($article))
+        {
             $response = [
-                'code' => 0,
-                'message' => 'Article updated !',
+                'code' => 1,
+                'message' => 'Article not found',
                 'error' => null,
                 'result' => null
             ];
-
-            return $this->json($response, 201, [], ['groups' => 'userArticle']);
+            return new JsonResponse($response, Response::HTTP_NOT_FOUND);
         }
 
+        $json = $request->getContent();
+        $data = $serializer->deserialize($json, Article::class, 'json');
+        $errors = $validator->validate($article);
+
+        if(count($errors) > 0)
+        {
+            return $this->json($errors, 400);
+        }
+
+        $article->setTitle($data->getTitle());
+        $article->setContent($data->getContent());
+
+        $em->persist($article);
+        $em->flush();
+
+        $response = [
+            'code' => 0,
+            'message' => 'Article updated !',
+            'error' => null,
+            'result' => null
+        ];
+
+        return $this->json($response, 201, [], ['groups' => 'userArticle']);
+    }
 
     /**
      * @Route("/delete/{id}", name="delete_articles", methods={"DELETE"})

@@ -18,6 +18,7 @@ class RegistrationController extends AbstractController
      */
     public function addUser(Request $request, SerializerInterface $serializer, EntityManagerInterface $em, ValidatorInterface $validator, UserPasswordEncoderInterface $passwordEncoder)
     {
+
         $json = $request->getContent();
         $user = $serializer->deserialize($json, User::class, 'json');
 
