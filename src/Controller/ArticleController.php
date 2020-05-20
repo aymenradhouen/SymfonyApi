@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Likes;
 use App\Repository\ArticleRepository;
+use App\Repository\LikesRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,7 +13,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -48,6 +49,7 @@ class ArticleController extends AbstractController
         return new JsonResponse($response, 200, ['groups' => 'userArticle']);
 
     }
+
 
     /**
      * @Route("/list/{email}", name="show_profile_article", methods={"GET"})
@@ -152,6 +154,34 @@ class ArticleController extends AbstractController
     }
 
     /**
+     * @Route("/like/{id}", name="list_like_articles", methods={"GET"})
+     */
+    public function listArticleLikes(LikesRepository $likesRepository,Article $article, ArticleRepository $articleRepository, SerializerInterface $serializer)
+    {
+        $likes = $likesRepository->findBy(['articles' => $article]);
+
+        if(empty($likes))
+        {
+            $response = [
+                'code' => 1,
+                'message' => 'No articles found !',
+                'error' => null,
+                'result' => null
+            ];
+            return new JsonResponse($response, Response::HTTP_NOT_FOUND);
+        }
+        $data = $serializer->serialize($likes, 'json', ['groups' => 'userArticle']);
+
+        $response = [
+            'code' => 0,
+            'message' => 'Success',
+            'error' => null,
+            'result' => json_decode($data)
+        ];
+        return new JsonResponse($response, 200, ['groups' => 'userArticle']);
+    }
+
+    /**
      * @Route("/profile/{id}", name="list_articles_profile", methods={"GET"})
      */
     public function listArticleProfile($id,UserRepository $userRepository,ArticleRepository $articleRepository, SerializerInterface $serializer)
@@ -181,61 +211,36 @@ class ArticleController extends AbstractController
     }
 
 
-//    /**
-//     * @Route("/like/{email}/{id}", name="like_article", methods={"PATCH"})
-//     */
-//    public function likeArticle($email, UserRepository $userRepository, Article $article, Request $request ,ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em)
-//    {
-//
-//        $user = $userRepository->findOneBy(['email' => $email]);
-//        $likes = $article->getLikes();
-//        $array[] = $article->getLikedBy();
-////        dd($array);
-////            if(empty($article))
-////            {
-////                $response = [
-////                    'code' => 1,
-////                    'message' => 'Article not found',
-////                    'error' => null,
-////                    'result' => null
-////                ];
-////                return new JsonResponse($response, Response::HTTP_NOT_FOUND);
-////            }
-////
-////            $json = $request->getContent();
-////            $data = $serializer->deserialize($json, Article::class, 'json');
-////            $errors = $validator->validate($article);
-//
-//        if(in_array("aymen", $array))
-//        {
-//        $article->setLikes($likes+1);
-//        $article->setLikedBy("aymen");
-//    } else {
-//            $article->setLikes($likes-1);
-//        }
-//
-//
-////            array_push($array,"aymen");
-//
-//
-////            if(count($errors) > 0)
-////            {
-////                return $this->json($errors, 400);
-////            }
-//
-//
-//            $em->persist($article);
-//            $em->flush();
-//
-//            $response = [
-//                'code' => 0,
-//                'message' => 'Article updated !',
-//                'error' => null,
-//                'result' => null
-//            ];
-//
-//            return $this->json($response, 201, [], ['groups' => 'userArticle']);
-//        }
+    /**
+     * @Route("/like/{email}/{id}", name="like_article", methods={"POST"})
+     */
+    public function likeArticle(LikesRepository $likesRepository, $email, UserRepository $userRepository, Article $article, Request $request ,ValidatorInterface $validator, SerializerInterface $serializer, EntityManagerInterface $em)
+    {
+
+        $user = $userRepository->findOneBy(['email' => $email]);
+        $likes = $likesRepository->findOneBy(['users' => $user,'articles' => $article]);
+        if(!$likes)
+        {
+            $like = new Likes();
+            $like->setUsers($user);
+            $like->setArticles($article);
+            $em->persist($like);
+            $em->flush();
+        } else {
+            $like = $likesRepository->findOneBy(['id' => $likes->getId()]);
+            $em->remove($like);
+            $em->flush();
+        }
+
+            $response = [
+                'code' => 0,
+                'message' => 'Article updated !',
+                'error' => null,
+                'result' => null
+            ];
+
+            return $this->json($response, 201, [], ['groups' => 'userArticle']);
+        }
 
 
     /**

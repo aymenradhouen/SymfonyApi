@@ -56,22 +56,11 @@ class Article
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="article")
+     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="article", orphanRemoval=true)
      * @Groups("userArticle")
      */
     private $comments;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups("userArticle")
-     */
-    private $likes;
-
-    /**
-     * @ORM\Column(type="array", nullable=true)
-     * @Groups("userArticle")
-     */
-    private $likedBy = [];
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -79,9 +68,15 @@ class Article
      */
     private $createdBy;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Likes", mappedBy="articles", orphanRemoval=true)
+     */
+    private $likess;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->likess = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -180,30 +175,6 @@ class Article
         return $this;
     }
 
-    public function getLikes(): ?int
-    {
-        return $this->likes;
-    }
-
-    public function setLikes(?int $likes): self
-    {
-        $this->likes = $likes;
-
-        return $this;
-    }
-
-    public function getLikedBy(): ?array
-    {
-        return $this->likedBy;
-    }
-
-    public function setLikedBy(?array $likedBy): self
-    {
-        $this->likedBy = $likedBy;
-
-        return $this;
-    }
-
     public function getCreatedBy(): ?string
     {
         return $this->createdBy;
@@ -212,6 +183,38 @@ class Article
     public function setCreatedBy(string $createdBy): self
     {
         $this->createdBy = $createdBy;
+
+        return $this;
+    }
+
+
+    /**
+     * @return Collection|Likes[]
+     */
+    public function getLikess(): Collection
+    {
+        return $this->likess;
+    }
+
+    public function addLikess(Likes $likess): self
+    {
+        if (!$this->likess->contains($likess)) {
+            $this->likess[] = $likess;
+            $likess->setArticles($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLikess(Likes $likess): self
+    {
+        if ($this->likess->contains($likess)) {
+            $this->likess->removeElement($likess);
+            // set the owning side to null (unless already changed)
+            if ($likess->getArticles() === $this) {
+                $likess->setArticles(null);
+            }
+        }
 
         return $this;
     }

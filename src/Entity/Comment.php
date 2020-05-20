@@ -31,17 +31,12 @@ class Comment
      */
     private $article;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups("userArticle")
-     */
-    private $firstName;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="comments")
      * @Groups("userArticle")
      */
-    private $lastName;
+    private $user;
 
     public function getId(): ?int
     {
@@ -72,26 +67,14 @@ class Comment
         return $this;
     }
 
-    public function getFirstName(): ?string
+    public function getUser(): ?User
     {
-        return $this->firstName;
+        return $this->user;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setUser(?User $user): self
     {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): self
-    {
-        $this->lastName = $lastName;
+        $this->user = $user;
 
         return $this;
     }

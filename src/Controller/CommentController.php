@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Comment;
+use App\Entity\User;
 use App\Repository\ArticleRepository;
 use App\Repository\CommentRepository;
 use App\Repository\UserRepository;
@@ -24,9 +25,11 @@ class CommentController extends AbstractController
     /**
      * @Route("/{id}", name="show_comments", methods={"GET"})
      */
-    public function showComment(Article $article, SerializerInterface $serializer, CommentRepository $commentRepository)
+    public function showComment( Article $article, UserRepository $userRepository, SerializerInterface $serializer, CommentRepository $commentRepository)
     {
+
         $comment = $commentRepository->findBy(['article' => $article]);
+
         if(empty($comment))
         {
             $response = [
@@ -67,8 +70,7 @@ class CommentController extends AbstractController
         }
 
         $comment->setArticle($article);
-        $comment->setFirstName($user->getFirstName());
-        $comment->setLastName($user->getLastName());
+        $comment->setUser($user);
 
         $em->persist($comment);
         $em->flush();
@@ -114,10 +116,11 @@ class CommentController extends AbstractController
 
 
     /**
-     * @Route("/{id}", name="delete_comment", methods={"DELETE"})
+     * @Route("/delete/{id}", name="delete_comment", methods={"DELETE"})
      */
     public function deleteComment(Comment $comment, EntityManagerInterface $em)
     {
+
         if(empty($comment))
         {
             $response = [
